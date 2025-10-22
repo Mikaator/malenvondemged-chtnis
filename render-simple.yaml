@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: drawing-from-memory
+    env: node
+    plan: free
+    buildCommand: |
+      echo "Installing server dependencies..."
+      npm install
+      echo "Installing client dependencies..."
+      cd client
+      npm install
+      echo "Building client..."
+      npm run build
+      echo "Build completed, checking directory..."
+      ls -la build/
+      cd ..
+      echo "All done!"
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /api/health
+    autoDeploy: true

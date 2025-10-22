@@ -42,19 +42,38 @@ if (process.env.NODE_ENV === 'production') {
   
   const buildPath = path.join(__dirname, 'client/build');
   
+  console.log('Production mode: Checking for build directory...');
+  console.log('Build path:', buildPath);
+  console.log('Current directory:', __dirname);
+  
+  // List contents of client directory
+  const clientDir = path.join(__dirname, 'client');
+  if (fs.existsSync(clientDir)) {
+    console.log('Client directory contents:', fs.readdirSync(clientDir));
+  } else {
+    console.log('Client directory does not exist!');
+  }
+  
   // Check if build directory exists
   if (fs.existsSync(buildPath)) {
+    console.log('Build directory found! Contents:', fs.readdirSync(buildPath));
     app.use(express.static(buildPath));
     
     app.get('*', (req, res) => {
       res.sendFile(path.join(buildPath, 'index.html'));
     });
   } else {
-    console.warn('Build directory not found, serving API only');
+    console.warn('Build directory not found at:', buildPath);
+    console.log('Available directories in client:', fs.existsSync(clientDir) ? fs.readdirSync(clientDir) : 'Client dir not found');
+    
     app.get('*', (req, res) => {
       res.json({ 
         error: 'Frontend not built yet', 
-        message: 'Please wait for the build process to complete' 
+        message: 'Please wait for the build process to complete',
+        buildPath: buildPath,
+        currentDir: __dirname,
+        clientDirExists: fs.existsSync(clientDir),
+        clientContents: fs.existsSync(clientDir) ? fs.readdirSync(clientDir) : 'N/A'
       });
     });
   }
