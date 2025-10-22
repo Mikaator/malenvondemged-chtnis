@@ -38,11 +38,26 @@ const dbManager = new DatabaseManager();
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   const path = require('path');
-  app.use(express.static(path.join(__dirname, 'client/build')));
+  const fs = require('fs');
   
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-  });
+  const buildPath = path.join(__dirname, 'client/build');
+  
+  // Check if build directory exists
+  if (fs.existsSync(buildPath)) {
+    app.use(express.static(buildPath));
+    
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(buildPath, 'index.html'));
+    });
+  } else {
+    console.warn('Build directory not found, serving API only');
+    app.get('*', (req, res) => {
+      res.json({ 
+        error: 'Frontend not built yet', 
+        message: 'Please wait for the build process to complete' 
+      });
+    });
+  }
 }
 
 // API Routes
