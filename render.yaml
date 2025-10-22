@@ -3,7 +3,7 @@ services:
     name: drawing-from-memory
     env: node
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && cd client && npm install && npm run build:react && cd ..
     startCommand: npm start
     envVars:
       - key: NODE_ENV
