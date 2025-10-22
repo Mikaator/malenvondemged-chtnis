@@ -15,9 +15,14 @@ class DatabaseManager {
         connectionString: process.env.DATABASE_URL,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
       });
+      
+      // Create tables on startup
+      await this.createTables();
+    } else {
+      console.log('No DATABASE_URL provided, running without database');
     }
 
-    // Redis connection
+    // Redis connection (optional)
     if (process.env.REDIS_URL) {
       this.redisClient = redis.createClient({
         url: process.env.REDIS_URL
@@ -27,7 +32,15 @@ class DatabaseManager {
         console.error('Redis Client Error:', err);
       });
       
-      this.redisClient.connect();
+      try {
+        await this.redisClient.connect();
+        console.log('Connected to Redis');
+      } catch (error) {
+        console.log('Redis connection failed, continuing without Redis:', error.message);
+        this.redisClient = null;
+      }
+    } else {
+      console.log('No REDIS_URL provided, running without Redis');
     }
   }
 
