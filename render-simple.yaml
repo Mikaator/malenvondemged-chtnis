@@ -10,7 +10,7 @@ services:
       cd client
       npm install
       echo "Building client..."
-      npm run build:client
+      npm run build
       echo "Build completed, checking directory..."
       ls -la build/
       cd ..
