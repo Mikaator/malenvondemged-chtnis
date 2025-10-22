@@ -10,7 +10,7 @@ services:
       cd client
       npm install
       echo "Building client..."
-      npx react-scripts build
+      ./node_modules/.bin/react-scripts build
       echo "Build completed, checking directory..."
       ls -la build/
       cd ..
