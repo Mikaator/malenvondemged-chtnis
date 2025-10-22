@@ -3,7 +3,7 @@ services:
     name: drawing-from-memory
     env: node
     plan: free
-    buildCommand: chmod +x build.sh && ./build.sh
+    buildCommand: npm install && cd client && npm install && npm run build && cd ..
     startCommand: npm start
     envVars:
       - key: NODE_ENV
